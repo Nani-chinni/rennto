@@ -27,6 +27,8 @@ export async function ensureAndroidChannel() {
 }
 
 export async function registerForPushNotificationsAsync() {
+  // Push notifications are turned off (see NotificationsProxy.js).
+  if (!Notifications.PUSH_NOTIFICATIONS_ENABLED) return null;
   try {
     if (Notifications.isExpoGo) {
       // Expo SDK 53+ removed remote push from Expo Go on Android.

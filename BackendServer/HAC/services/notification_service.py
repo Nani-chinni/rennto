@@ -6,6 +6,41 @@ from .common_service import CommonService
 
 class NotificationService:
 
+    # One-time welcome message added to the notifications list the first time
+    # an owner account or tenant logs in.
+    LOGIN_WELCOME_TITLE = "Welcome to Rennto 🎉"
+    LOGIN_WELCOME_MESSAGE = "You have logged in to Rennto successfully."
+
+    @staticmethod
+    def add_login_welcome(owner=None, tenant=None):
+        """Create the welcome notification once per owner account / tenant.
+
+        Never raises: a problem here must not block the login itself.
+        """
+        title = NotificationService.LOGIN_WELCOME_TITLE
+        message = NotificationService.LOGIN_WELCOME_MESSAGE
+        try:
+            if owner is not None:
+                if not Notification.objects.filter(owner_account=owner, title=title).exists():
+                    Notification.objects.create(
+                        owner_account=owner,
+                        recipient_phone=owner.owner_id,
+                        title=title,
+                        message=message,
+                    )
+            if tenant is not None and tenant.phone:
+                from HAC.models import TenantNotification
+                phone = str(tenant.phone).strip()
+                variants = {phone, phone.lstrip('+'), phone[-10:]}
+                if not TenantNotification.objects.filter(tenant_phone__in=list(variants), title=title).exists():
+                    TenantNotification.objects.create(
+                        tenant_phone=phone,
+                        title=title,
+                        message=message,
+                    )
+        except Exception as e:
+            print(f"BACKEND: login welcome notification skipped: {e}")
+
     @staticmethod
     def send_push_notification(push_token, title, body):
         try:

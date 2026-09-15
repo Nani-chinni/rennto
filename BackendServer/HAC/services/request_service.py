@@ -431,6 +431,24 @@ class RequestService:
                 "is_hostel_change_request": True,
             })
 
+        # ── Welcome message (added on first login) ──
+        # The owner list is built from requests only, so the one-time welcome
+        # notification is added here to be visible next to the badge count.
+        welcome = Notification.objects.filter(
+            owner_account=owner, title=NotificationService.LOGIN_WELCOME_TITLE
+        )
+        for n in welcome:
+            data.append({
+                "id": f"notif_{n.id}",
+                "db_id": n.id,
+                "type": "MESSAGE",
+                "title": n.title,
+                "message": n.message,
+                "is_read": n.is_read,
+                "created_at": n.created_at,
+                "is_existing_tenant": False,
+            })
+
         # Sort combined list by created_at descending
         data.sort(key=lambda x: x['created_at'], reverse=True)
         return data

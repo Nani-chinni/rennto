@@ -131,6 +131,9 @@ export const BookingProvider = ({ children }) => {
       return;
     }
 
+    // Any unread-count request already in flight was sent before this
+    // mark-all-read, so its (older, higher) number must not overwrite the result.
+    const seq = ++unreadRequestSeq.current;
     try {
       const roleParam = role ? `?role=${encodeURIComponent(role)}` : "";
       const res = await fetchWithAuth(`${BASE_URL}/api/notifications/${encodeURIComponent(phone)}/mark-all-read/${roleParam}`, {
@@ -141,7 +144,9 @@ export const BookingProvider = ({ children }) => {
       if (res.ok) {
         const data = await res.json().catch(() => null);
         const count = typeof data?.unread_count === "number" ? Math.max(0, data.unread_count) : 0;
-        setUnreadNotificationCount(count);
+        if (seq === unreadRequestSeq.current) {
+          setUnreadNotificationCount(count);
+        }
       }
     } catch (e) {
       console.log("Error marking all notifications read:", e);

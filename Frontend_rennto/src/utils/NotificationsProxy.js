@@ -2,6 +2,12 @@ import Constants from "expo-constants";
 
 let Notifications = null;
 
+// Phone (push) notifications are turned off for the whole app. With this set
+// to false the app never asks for notification permission, never creates a
+// push token and never shows system notifications. In-app notifications
+// (list, badge, sound, vibration) are not affected. Set to true to re-enable.
+export const PUSH_NOTIFICATIONS_ENABLED = false;
+
 // Remote (push) notifications are NOT available in Expo Go on Android from
 // Expo SDK 53 onwards. Detect Expo Go and fall back to a no-op shim so the app
 // still runs there — but never hand back a fake token, because callers save
@@ -12,7 +18,7 @@ export const isExpoGo =
   Constants.executionEnvironment === "storeClient" ||
   Constants.appOwnership === "expo";
 
-if (!isExpoGo) {
+if (PUSH_NOTIFICATIONS_ENABLED && !isExpoGo) {
   try {
     Notifications = require("expo-notifications");
   } catch (e) {
@@ -79,6 +85,7 @@ export const AndroidImportance = isMock
   : Notifications?.AndroidImportance;
 
 export default {
+  PUSH_NOTIFICATIONS_ENABLED,
   isExpoGo,
   setNotificationHandler,
   getPermissionsAsync,

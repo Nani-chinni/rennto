@@ -2,7 +2,14 @@ import requests
 import json
 from .models import Tenent, Owners
 
+# Phone (Expo) push notifications are turned off. Both senders below return
+# without contacting Expo, so no push reaches any device. In-app notification
+# records are still created by the callers. Set to True to re-enable.
+PUSH_NOTIFICATIONS_ENABLED = False
+
 def send_push_notification(phone, title, body, data=None):
+    if not PUSH_NOTIFICATIONS_ENABLED:
+        return False
     if data is None:
         data = {}
 
@@ -48,6 +55,8 @@ def send_push_notification(phone, title, body, data=None):
         return False
 
 def send_expo_push_notification(push_token, title, body, data=None):
+    if not PUSH_NOTIFICATIONS_ENABLED:
+        return False
     if not push_token:
         return False
 

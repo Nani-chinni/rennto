@@ -10,6 +10,7 @@ from HAC.models import Tenent, Owners, AdminPassword, SystemSettings
 from HAC.serializers import TenentSerializer, TenantLoginSerializer, OwnerLoginSerializer
 from HAC.jwt_utils import generate_jwt_token
 from .common_service import CommonService
+from .notification_service import NotificationService
 
 class AuthService:
 
@@ -32,6 +33,7 @@ class AuthService:
             tenant.save()
             
         token = generate_jwt_token(tenant.id, 'tenant')
+        NotificationService.add_login_welcome(tenant=tenant)
         return {
             "message": "Tenent registered successfully",
             "token": token,
@@ -77,6 +79,7 @@ class AuthService:
             raise ValueError("Invalid Password")
 
         token = generate_jwt_token(user_id=tenant.id, role='tenant', phone=tenant.phone)
+        NotificationService.add_login_welcome(tenant=tenant)
         return {
             "message": "Login Successful",
             "tenant_id": tenant.id,
@@ -126,6 +129,7 @@ class AuthService:
 
         if owner.status == "active" and owner.password == password:
             token = generate_jwt_token(user_id=owner.pk, role='owner', phone=owner.phone)
+            NotificationService.add_login_welcome(owner=owner)
             return {"status": 200, "message": "Login Successful", "token": token}
 
         raise ValueError("Invalid Password")
@@ -294,6 +298,9 @@ class AuthService:
                     role="owner",
                     phone=owner.phone
                 )
+                # Only an approved account actually opens the app.
+                if owner.status == "active":
+                    NotificationService.add_login_welcome(owner=owner)
  
                 return {
                     "verified": True,
@@ -324,6 +331,7 @@ class AuthService:
                     role="tenant",
                     phone=tenant.phone
                 )
+                NotificationService.add_login_welcome(tenant=tenant)
  
                 return {
                     "verified": True,
