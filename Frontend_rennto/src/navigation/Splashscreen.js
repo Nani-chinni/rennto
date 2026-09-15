@@ -13,7 +13,7 @@ import Animated, {
 import { Image } from "expo-image";
 import Svg, { Defs, RadialGradient, LinearGradient, Stop, Circle, Mask, Image as SvgImage, Rect, G } from "react-native-svg";
 
-const LOGO_SOURCE = require("../../assets/images/renntologo.png");
+const LOGO_SOURCE = require("../../assets/images/rent.png");
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // --- Sizing and Proportions ---
