@@ -1,0 +1,97 @@
+import "react-native-gesture-handler";
+import "@/src/utils/alertOnce"; // one alert popup at a time (global guard)
+import { useEffect } from "react";
+import { LogBox } from "react-native";
+
+import { BookingProvider } from "@/src/context/BookingContext";
+import { TenantProvider } from "@/src/context/TenantContext";
+import { LanguageProvider } from "@/src/utils/LanguageContext";
+import MainNavigator from "@/src/navigation/MainNavigator";
+import { MaintenanceProvider } from "@/src/context/MaintenanceContext";
+import MaintenanceBanner from "@/src/components/MaintenanceBanner";
+import { NetworkProvider } from "@/src/context/NetworkContext";
+import OfflineScreen from "@/src/components/OfflineScreen";
+
+
+
+
+import {
+  registerForPushNotificationsAsync,
+} from "@/src/utils/PushNotificationService";
+
+LogBox.ignoreAllLogs(true);
+LogBox.ignoreLogs([
+  "setLayoutAnimationEnabledExperimental is currently a no-op",
+  "Unable to activate keep awake",
+  "Expo AV has been deprecated"
+]);
+
+// Global override to remove all console prints as requested
+if (true) {
+  console.log = () => {};
+  console.info = () => {};
+}
+
+if (
+  typeof window !== "undefined" &&
+  typeof window.addEventListener === "function"
+) {
+  window.addEventListener("unhandledrejection", (event) => {
+    if (
+      event.reason &&
+      event.reason.message &&
+      event.reason.message.includes("keep awake")
+    ) {
+      event.preventDefault();
+    }
+  });
+}
+
+import { OwnerAccountProvider } from "@/src/context/OwnerAccountContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { navigationRef } from "./src/navigation/navigationRef";
+
+export { navigationRef };
+
+export default function App() {
+
+  useEffect(() => {
+
+   
+
+    const getPushToken = async () => {
+
+      const token =
+        await registerForPushNotificationsAsync();
+
+
+
+    };
+
+    getPushToken();
+
+  }, []);
+
+  return (
+    <SafeAreaProvider>
+      <NetworkProvider>
+        <LanguageProvider>
+          <BookingProvider>
+            <TenantProvider>
+              <OwnerAccountProvider>
+                <MaintenanceProvider>
+                  <NavigationContainer ref={navigationRef}>
+                    <MainNavigator />
+                  </NavigationContainer>
+                  <MaintenanceBanner />
+                  <OfflineScreen />
+                </MaintenanceProvider>
+              </OwnerAccountProvider>
+            </TenantProvider>
+          </BookingProvider>
+        </LanguageProvider>
+      </NetworkProvider>
+    </SafeAreaProvider>
+  );
+}

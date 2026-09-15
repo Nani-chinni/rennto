@@ -1,0 +1,70 @@
+{
+  "expo": {
+    "name": "Rennto",
+    "slug": "rennto",
+    "version": "1.0.0",
+    "icon": "./assets/images/renntologo-icon.png",
+    "orientation": "portrait",
+    "scheme": "rennto",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "end",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "Allow Rennto to access your photos so you can upload payment screenshots."
+      },
+      "icon": "./assets/images/renntologo-icon.png"
+    },
+    "android": {
+      "package": "in.rennto.app",
+      "googleServicesFile": "./google-services.json",
+      "softwareKeyboardLayoutMode": "resize",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/images/renntologo-adaptive.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
+    },
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "@react-native-community/datetimepicker",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/rent2.png",
+          "color": "#5F259F"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FAF9F6"
+        }
+      ],
+      "expo-audio",
+      "expo-asset",
+      "./withUCropString.js",
+      "expo-localization",
+      "expo-sharing"
+    ],
+    "experiments": {
+      "reactCompiler": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6643436e-84c3-4a08-91e6-44dea1828d66"
+      }
+    }
+  }
+}
